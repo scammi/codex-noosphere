@@ -5,11 +5,14 @@
 
 Codex Noosphere extends the QuarkID self-sovereign identity platform, a W3C Verifiable Credentials system, to create an automated cultural heritage preservation system. Inspired by Teilhard de Chardin's vision of the noosphere as humanity's thinking layer, we're building the technical infrastructure where all cultural knowledge can be preserved, verified, and discovered collectively.
 
+Our system gives a researcher a wallet and a credential that marks them as an authorized publisher. The credential is presented and verified in an instance of submitting a cultural artifact for documentation. Once the presentation is verified, the document is uploaded to IPFS and an on-chain attestation created. Our Dataverse agent picks up the event, downloads the document, creates structured metadata and uploads it onto a Dataverse Collection. The result is a process that requires the researcher to only upload once, the cultural heritage is preserved in perpetual storage, and automatically the data becomes findable through Dataverse, no need for the researcher to manually create the dataset and upload.
+
+
 ## The Problem
 
 - Cultural heritage institutions pay $2+ per DOI for research identifiers
 - Ukraine war nearly destroyed 50TB of irreplaceable cultural data
-- Researchers lose control of their metadata to centralized publishers
+- Publishing to Dataverse is cumbersome manual process that require data to be structure
 - Cultural documentation sits in isolated silos, undiscoverable
 
 ## Our Solution
@@ -29,10 +32,10 @@ Codex Noosphere extends the QuarkID self-sovereign identity platform, a W3C Veri
 
 ## Key Features
 
-- **🆔 DID-based Identifiers**: Replace expensive DOIs with QuarkID credentials (99.5% cost reduction)
+- **🆔 DID-based Identifiers**:  Each researcher gets their wallet, their private key is used to issue document attestations. 
 - **📜 Immutable Preservation**: IPFS + blockchain ensures cultural memory survives institutional collapse
-- **🤖 AI Metadata Generation**: Automatically extracts structured metadata from cultural heritage documents
-- **🌐 Dataverse Integration**: Seamless publishing to the world's largest research data repository
+- **🤖 AI Metadata Generation**: Automatically extracts structured metadata from the document.
+- **🌐 Dataverse Integration**: Extracted metadata isu used to publishing to the world's largest research data repository
 - **⚡ User Empowerment**: Researchers control their credentials and metadata sovereignty
 
 ## Workflow
