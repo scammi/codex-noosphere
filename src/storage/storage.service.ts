@@ -65,7 +65,6 @@ export class StorageService {
         uploadedAt: new Date().toISOString(),
       };
     } catch (error) {
-      // Type guard to safely access error properties
       if (error instanceof Error) {
         this.logger.error(
           `Failed to upload file ${fileName}: ${error.message}`,
@@ -101,7 +100,7 @@ export class StorageService {
         })) as PinataUploadResponse;
 
       const url = `${this.pinataGateway}/ipfs/${upload.cid}`;
-       console.log(url) 
+
       return {
         cid: upload.cid,
         name: upload.name,
@@ -110,7 +109,6 @@ export class StorageService {
         uploadedAt: new Date().toISOString(),
       };
     } catch (error) {
-      // Type guard to safely access error properties
       if (error instanceof Error) {
         this.logger.error(
           `Failed to upload JSON: ${error.message}`,
