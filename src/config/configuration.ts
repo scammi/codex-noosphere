@@ -5,8 +5,8 @@ export default () => ({
     port: parseInt(process.env.DATABASE_PORT!, 10) || 5432,
   },
   ipfs: {
-    pinataApiKey: process.env.PINATA_API_KEY,
-    pinataSecretKey: process.env.PINATA_SECRET_KEY,
+    pinataJWT: process.env.PINATA_JWT,
+    pinataGateway: process.env.PINATA_GATEWAY,
   },
   blockchain: {
     rpcUrl: process.env.RPC_URL,
