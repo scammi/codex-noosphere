@@ -34,10 +34,6 @@ export class AiExtractorService {
     text: string,
     templateName: 'cultural-heritage' | 'simple' | 'custom' = 'simple',
   ): Promise<ExtractedContent> {
-    if (!this.chatModel) {
-      return this.fallbackExtraction(text);
-    }
-
     try {
       const truncatedText = text.substring(0, 4000);
 
@@ -45,6 +41,7 @@ export class AiExtractorService {
       const formattedTemplate = this.templateService.formatTemplate(template, {
         text: truncatedText,
         maxChars: '4000',
+        current_date: new Date().toISOString().split('T')[0],
       });
 
       // Create prompt
@@ -63,20 +60,10 @@ export class AiExtractorService {
       );
       const extracted = JSON.parse(cleanedResponse);
 
-      // Validate and return
-      if (this.isValidExtraction(extracted)) {
-        this.logger.log('Gemini extraction successful');
-        return {
-          ...extracted,
-          heritage_type: this.validateHeritageType(extracted.heritage_type),
-        };
-      } else {
-        this.logger.warn('Invalid Gemini response, using fallback');
-        return this.fallbackExtraction(text);
-      }
+      return extracted as ExtractedContent;
     } catch (error) {
       this.logger.error('Gemini extraction failed:', error.message);
-      return this.fallbackExtraction(text);
+      throw new Error();
     }
   }
 
@@ -93,83 +80,5 @@ export class AiExtractorService {
     }
 
     return cleaned.trim();
-  }
-
-  private isValidExtraction(extraction: any): boolean {
-    return (
-      extraction &&
-      Array.isArray(extraction.keywords) &&
-      Array.isArray(extraction.locations) &&
-      typeof extraction.summary === 'string' &&
-      typeof extraction.heritage_type === 'string'
-   );
-  }
-
-  private validateHeritageType(type: string): ExtractedContent['heritage_type'] {
-    const validTypes: ExtractedContent['heritage_type'][] = [
-      'Cultural',
-      'Natural',
-      'Mixed',
-      'Intangible'
-    ];
-    return validTypes.includes(type as any)
-      ? (type as ExtractedContent['heritage_type'])
-      : 'Cultural';
-  }
-
-  private fallbackExtraction(text: string): ExtractedContent {
-    this.logger.log('Using fallback extraction');
-
-    const culturalTerms = [
-      'heritage',
-      'cultural',
-      'monument',
-      'archaeological',
-      'historic',
-      'preservation',
-      'conservation',
-      'unesco',
-      'site',
-      'museum',
-    ];
-
-    // Extract keywords
-    const keywords = culturalTerms
-      .filter((term) => text.toLowerCase().includes(term))
-      .slice(0, 5);
-
-    // Better location extraction
-    const locationMatches = [
-      ...(text.match(/\b[A-Z][a-z]+,\s+[A-Z][a-z]+\b/g) || []), // "Siem Reap, Cambodia"
-      ...(text.match(/\b[A-Z][a-z]+\s+Archaeological\s+Park\b/g) || []), // "Angkor Archaeological Park"
-      ...(text.match(/\b[A-Z][a-z]+\s+(?:Site|Museum|Monument|Temple)\b/g) || []),
-    ];
-    const locations = [...new Set(locationMatches)].slice(0, 3);
-
-    // Heritage type detection - prioritize Cultural for heritage docs
-    let heritage_type = 'Cultural';
-    if (text.toLowerCase().includes('natural park') ||
-        text.toLowerCase().includes('biodiversity') ||
-        text.toLowerCase().includes('ecosystem')) {
-      heritage_type = 'Natural';
-    }
-    if (text.toLowerCase().includes('intangible') ||
-        text.toLowerCase().includes('tradition') ||
-        text.toLowerCase().includes('folklore')) {
-      heritage_type = 'Intangible';
-    }
-
-    // Clean summary
-    const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 20);
-    const summary = sentences.slice(0, 2).join('. ').trim().substring(0, 200) +
-      (sentences.length > 2 ? '...' : '');
-
-    return {
-      keywords: keywords.length > 0 ? keywords : ['cultural heritage'],
-      locations,
-      summary: summary || 'Cultural heritage document processed by AI agent.',
-      heritage_type: this.validateHeritageType(heritage_type),
-      confidence: 0.7,
-    };
   }
 }

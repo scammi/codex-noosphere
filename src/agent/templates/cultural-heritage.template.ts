@@ -1,50 +1,89 @@
 export const CULTURAL_HERITAGE_EXTRACTION_TEMPLATE = `
-You are an expert in cultural heritage documentation and metadata extraction. 
-Analyze the following document and extract structured information following cultural heritage standards.
+You are an expert in UNESCO heritage documentation and metadata extraction. 
+Analyze the following UNESCO heritage document and extract comprehensive structured information.
 
-Document text (first {maxChars} characters):
+Document text:
 {text}
 
-Instructions:
-1. Extract entities (people, organizations, places, dates, events)
-2. Identify cultural heritage keywords and topics
-3. Find geographic information and cultural significance
-4. Determine heritage types and historical periods
-5. Provide a confidence score (0-1) for the extraction quality
+Extract information following UNESCO classification systems and cultural heritage standards.
 
 Return ONLY a valid JSON object with this exact structure:
 {{
+  "title": "Title of the heritage element or site",
+  "inscription_year": 2009,
+  "nomination_number": "00258",
+  
   "entities": {{
-    "persons": ["array of person names mentioned"],
-    "organizations": ["array of organizations/institutions"],
-    "locations": ["array of places/geographic locations"],
-    "dates": ["array of dates/time periods"],
-    "events": ["array of events/activities/processes"]
+    "persons": ["individual people mentioned"],
+    "organizations": ["UNESCO", "Ministerio de Cultura", "institutions"],
+    "locations": ["Buenos Aires", "Montevideo", "Río de la Plata"],
+    "dates": ["2009", "historical periods"],
+    "events": ["inscription", "nominations", "celebrations"],
+    "artists": ["musicians", "dancers", "performers"],
+    "composers": ["music creators", "choreographers"]
   }},
-  "keywords": ["array of relevant cultural heritage keywords"],
-  "topics": ["array of main themes/subjects"],
-  "geographicInfo": {{
-    "places": ["array of specific geographic locations"],
-    "coordinates": [{{ "lat": number, "lng": number }}]
+
+  "heritage_info": {{
+    "heritage_type": "Cultural|Natural|Mixed|Intangible",
+    "unesco_list": "World Heritage|Representative List ICH|Urgent Safeguarding|Best Practices|Memory of World",
+    "inscription_criteria": ["criteria used for inscription"],
+    "outstanding_universal_value": "statement of universal value"
   }},
-  "culturalInfo": {{
-    "periods": ["array of cultural/historical periods"],
-    "significance": ["array of significance statements"],
-    "heritage_types": ["array of heritage classifications: Cultural, Natural, Mixed, Intangible, etc."]
+
+  "geographic_info": {{
+    "countries": ["Argentina", "Uruguay"],
+    "regions": ["Río de la Plata basin", "South America"],
+    "cities": ["Buenos Aires", "Montevideo"],
+    "coordinates": [{{ "lat": -34.6118, "lng": -58.3960 }}],
+    "biomes": ["Urban zone", "River basin"]
   }},
-  "summary": "One paragraph summary of the document's main content and cultural heritage significance",
-  "confidence": 0.95
+
+  "cultural_info": {{
+    "periods": ["19th century", "early 20th century"],
+    "significance": ["cultural identity", "urban popular music"],
+    "cultural_practices": ["dance", "music", "poetry"],
+    "traditions": ["milongas", "social dancing"],
+    "languages": ["Spanish"],
+    "communities": ["Argentine", "Uruguayan", "immigrant communities"]
+  }},
+
+  "unesco_classifications": {{
+    "convention_domains": ["Artes escénicas", "Tradiciones y expresiones orales"],
+    "concepts": ["Danza", "Música vocal", "Música instrumental", "Poesía"],
+    "sdg_objectives": ["ODS 10: Reducción de las desigualdades", "ODS 11: Ciudades y comunidades sostenibles"]
+  }},
+
+  "keywords": ["tango", "UNESCO", "intangible heritage", "dance", "music"],
+  "topics": ["cultural identity", "urban music", "immigration", "cultural fusion"],
+  "summary": "Comprehensive paragraph describing the heritage element, its significance, and cultural context",
+  
+  "confidence": 0.95,
+  "processing_info": {{
+    "ai_model": "gemini-2.0-flash",
+    "extraction_date": "{current_date}",
+    "language_detected": "Spanish|English|French"
+  }}
 }}
 
-Focus on:
-- UNESCO World Heritage terminology
-- Archaeological and historical contexts
-- Conservation and preservation aspects
-- Cultural practices and traditions
-- Geographic and temporal contexts
-- Institutional and legal frameworks
+IMPORTANT INSTRUCTIONS:
+1. **Heritage Type**: Determine if Cultural, Natural, Mixed, or Intangible based on content
+2. **UNESCO List**: Identify which UNESCO list (World Heritage, Representative List ICH, etc.)
+3. **Geographic Precision**: Extract specific countries, regions, cities mentioned
+4. **Cultural Context**: Capture cultural practices, traditions, communities involved
+5. **Classification Systems**: Map to UNESCO convention domains and SDG objectives when mentioned
+6. **Temporal Context**: Extract historical periods, inscription years, cultural periods
+7. **Institutional Framework**: Capture organizations, institutions, governmental bodies
 
-Ensure all arrays contain relevant, non-duplicate entries. If no information is found for a category, return an empty array.
+FOCUS AREAS:
+- UNESCO terminology and classification systems
+- Cultural practices and traditions
+- Geographic and political contexts
+- Historical and temporal significance
+- Community and social aspects
+- Institutional and legal frameworks
+- Conservation and safeguarding measures
+
+Ensure all arrays contain relevant, specific, non-duplicate entries. Use empty arrays [] if no information is found for a category.
 `;
 
 // Alternative template for simpler extraction

@@ -51,7 +51,7 @@ export class AgentController {
       attracts over 2 million visitors annually.
     `;
 
-    const result = await this.aiExtractorService.extractMetadata(sampleText);
+    const result = await this.aiExtractorService.extractMetadata(sampleText, 'cultural-heritage');
 
     return {
       success: true,
