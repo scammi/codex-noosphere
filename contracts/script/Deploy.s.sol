@@ -10,7 +10,7 @@ contract DeployScript is Script {
         
         vm.startBroadcast(deployerPrivateKey);
         
-        DocumentAttestation attestationContract = new Attestation();
+        Attestation attestationContract = new Attestation();
         
         console.log("DocumentAttestation deployed to:", address(attestationContract));
         
