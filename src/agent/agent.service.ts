@@ -33,15 +33,16 @@ export class AiExtractorService {
   async extractMetadata(
     metadata: Record<string, any>,
     pdf: string,
-    templateName: 'cultural-heritage' | 'simple' | 'custom' = 'simple',
+    templateName:
+      | 'cultural-heritage'
+      | 'simple'
+      | 'custom' = 'cultural-heritage',
   ): Promise<ExtractedContent> {
     try {
       const pdfText = await this.convertPdfToText(pdf);
 
-      const combinedContent = {
-        pdfText,
-        ...metadata,
-      };
+      const parsedCredential = JSON.parse(metadata?.credential);
+      console.log({parsedCredential});
 
       const template = this.templateService.getTemplate(templateName);
 
@@ -52,7 +53,8 @@ export class AiExtractorService {
         current_date: new Date().toISOString().split('T')[0],
         cid: metadata?.ipfsCID,
         trxHash: '',
-        reasercher: '',
+        did: parsedCredential?.credentialSubject.id,
+        reasercher:  parsedCredential?.credentialSubject.name,
         institution: '',
       });
 

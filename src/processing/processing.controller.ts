@@ -29,7 +29,9 @@ export class ProcessingController {
       template?: string;
     },
   ) {
-    const { metadata, pdf, template } = body;
+    const { metadata, pdf } = body;
+
+    console.log(metadata);
 
     if (!pdf) {
     throw new HttpException(
@@ -60,9 +62,9 @@ export class ProcessingController {
       const extractionResult = await this.aiExtractorService.extractMetadata(
         updatedMetadata,
         pdf,
-        template as any,
       );
       this.logger.log('Agent Service extraction completed.');
+      console.log(extractionResult);
 
       return {
         success: true,
