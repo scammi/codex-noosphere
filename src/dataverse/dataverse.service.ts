@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import * as FormData from 'form-data';
 import { Readable } from 'stream';
-import { ExtractedContent } from 'src/agent/extraction.interface';
+import { ExtractedContent } from 'src/agent/interfaces/extraction.interface';
 
 @Injectable()
 export class DataverseService {

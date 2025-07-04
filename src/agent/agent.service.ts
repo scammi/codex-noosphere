@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { PromptTemplate } from '@langchain/core/prompts';
-import { ExtractedContent } from './extraction.interface';
+import { ExtractedContent } from './interfaces/extraction.interface';
 import { TemplateService } from './templates/template.service';
 
 @Injectable()
@@ -42,11 +42,9 @@ export class AiExtractorService {
       const pdfText = await this.convertPdfToText(pdf);
 
       const parsedCredential = JSON.parse(metadata?.credential);
-      console.log({parsedCredential});
 
       const template = this.templateService.getTemplate(templateName);
 
-      // Each item we want to inject onto the prompt needs to be specified.
       const formattedTemplate = this.templateService.formatTemplate(template, {
         text: pdfText,
         maxChars: '4000',
@@ -54,7 +52,7 @@ export class AiExtractorService {
         cid: metadata?.ipfsCID,
         trx_hash: '',
         did: parsedCredential?.credentialSubject.id,
-        researcher:  parsedCredential?.credentialSubject.name,
+        researcher: parsedCredential?.credentialSubject.name,
         institution: 'LuceroLabs',
         email: 'test@lucero.com',
       });
@@ -101,12 +99,9 @@ export class AiExtractorService {
     }
   }
 
-
   private cleanJsonResponse(response: string): string {
-    // Remove markdown code blocks
     let cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '');
 
-    // Remove any text before the first {
     const start = cleaned.indexOf('{');
     const end = cleaned.lastIndexOf('}');
 

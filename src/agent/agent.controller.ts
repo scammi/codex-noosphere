@@ -5,7 +5,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 export class AgentController {
   constructor(private aiExtractorService: AiExtractorService) {}
 
-  @Post('publish')
+  @Post('extract-metadata')
   async extraction(
     @Body()
     body: {

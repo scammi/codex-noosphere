@@ -10,7 +10,7 @@ import {
 import { StorageService } from '../storage/storage.service';
 import { AiExtractorService } from '../agent/agent.service';
 import { DataverseService } from '../dataverse/dataverse.service';
-import { ExtractedContent } from '../agent/extraction.interface';
+import { ExtractedContent } from '../agent/interfaces/extraction.interface';
 
 @Controller('process')
 export class ProcessingController {
@@ -40,8 +40,6 @@ export class ProcessingController {
   }> {
     const { metadata, pdf } = body;
 
-    console.log(metadata);
-
     if (!pdf) {
       throw new HttpException(
         'PDF content is required',
@@ -68,10 +66,10 @@ export class ProcessingController {
 
       // 3. Call Agent Service
       this.logger.log('Calling Agent Service for extraction...');
+
       const extractionResult: ExtractedContent =
         await this.aiExtractorService.extractMetadata(updatedMetadata, pdf);
       this.logger.log('Agent Service extraction completed.');
-      console.log(extractionResult);
 
       // 4. Upload extracted metadata to Dataverse
       this.logger.log('Uploading extracted metadata to Dataverse...');
@@ -82,7 +80,6 @@ export class ProcessingController {
         );
 
       this.logger.log('Metadata uploaded to Dataverse.');
-      console.log(dataverseResult);
 
       return {
         success: true,
