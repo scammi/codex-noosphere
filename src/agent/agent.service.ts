@@ -52,10 +52,11 @@ export class AiExtractorService {
         maxChars: '4000',
         current_date: new Date().toISOString().split('T')[0],
         cid: metadata?.ipfsCID,
-        trxHash: '',
+        trx_hash: '',
         did: parsedCredential?.credentialSubject.id,
-        reasercher:  parsedCredential?.credentialSubject.name,
-        institution: '',
+        researcher:  parsedCredential?.credentialSubject.name,
+        institution: 'LuceroLabs',
+        email: 'test@lucero.com',
       });
 
       // Create prompt

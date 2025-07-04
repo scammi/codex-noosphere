@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { StorageService } from '../storage/storage.service';
 import { AiExtractorService } from '../agent/agent.service';
+import { DataverseService } from '../dataverse/dataverse.service';
+import { ExtractedContent } from '../agent/extraction.interface';
 
 @Controller('process')
 export class ProcessingController {
@@ -18,6 +20,8 @@ export class ProcessingController {
     @Inject(StorageService) private readonly storageService: StorageService,
     @Inject(AiExtractorService)
     private readonly aiExtractorService: AiExtractorService,
+    @Inject(DataverseService)
+    private readonly dataverseService: DataverseService,
   ) {}
 
   @Post('document')
@@ -28,16 +32,21 @@ export class ProcessingController {
       pdf: string; // base64 string
       template?: string;
     },
-  ) {
+  ): Promise<{
+    success: boolean;
+    data: ExtractedContent;
+    dataverseResult?: any;
+    message: string;
+  }> {
     const { metadata, pdf } = body;
 
     console.log(metadata);
 
     if (!pdf) {
-    throw new HttpException(
-      'PDF content is required',
-      HttpStatus.BAD_REQUEST,
-    );
+      throw new HttpException(
+        'PDF content is required',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     try {
@@ -59,17 +68,28 @@ export class ProcessingController {
 
       // 3. Call Agent Service
       this.logger.log('Calling Agent Service for extraction...');
-      const extractionResult = await this.aiExtractorService.extractMetadata(
-        updatedMetadata,
-        pdf,
-      );
+      const extractionResult: ExtractedContent =
+        await this.aiExtractorService.extractMetadata(updatedMetadata, pdf);
       this.logger.log('Agent Service extraction completed.');
       console.log(extractionResult);
+
+      // 4. Upload extracted metadata to Dataverse
+      this.logger.log('Uploading extracted metadata to Dataverse...');
+      const dataverseResult: any =
+        await this.dataverseService.createHeritageDataset(
+          extractionResult,
+          pdf,
+        );
+
+      this.logger.log('Metadata uploaded to Dataverse.');
+      console.log(dataverseResult);
 
       return {
         success: true,
         data: extractionResult,
-        message: 'Document processed successfully',
+        dataverseResult: dataverseResult,
+        message:
+          'Document processed and metadata uploaded to Dataverse successfully',
       };
     } catch (error) {
       this.logger.error(
@@ -77,7 +97,9 @@ export class ProcessingController {
         error instanceof Error ? error.message : error,
       );
       throw new HttpException(
-        `Failed to process document: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to process document: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
