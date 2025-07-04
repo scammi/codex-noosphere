@@ -60,7 +60,7 @@ export class ProcessingController {
       const extractionResult = await this.aiExtractorService.extractMetadata(
         updatedMetadata,
         pdf,
-        template as any, // Cast template to any for now, refine later if needed
+        template as any,
       );
       this.logger.log('Agent Service extraction completed.');
 

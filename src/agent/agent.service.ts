@@ -50,7 +50,7 @@ export class AiExtractorService {
         text: pdfText,
         maxChars: '4000',
         current_date: new Date().toISOString().split('T')[0],
-        cid: '',
+        cid: metadata?.ipfsCID,
         trxHash: '',
         reasercher: '',
         institution: '',

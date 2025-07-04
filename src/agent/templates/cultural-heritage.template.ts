@@ -16,7 +16,7 @@ Return ONLY a valid JSON object with this exact structure:
   "affiliation": "if not provided mock",;
   contactEmail": "if not provided mock",;
   description": "if not provided mock",;
-  "ipfsHash": "if not provided mock",;
+  "ipfsHash": {cid},;
   "blockchainAttestation": "if not provided mock",;
   
   "entities": {{
