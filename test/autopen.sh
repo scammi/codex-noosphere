@@ -1,8 +1,8 @@
 #!/usr/bin/env fish
 
 # Configuration
-set BASE_URL "http://localhost:3001"  # Change this to your actual API URL
-set ENDPOINT "/api/agent/publish"
+set BASE_URL "http://localhost:3001"
+set ENDPOINT "/api/process/document"
 
 # Base64 PDF file
 set PDF_BASE64_FILE "pdfbase64.txt"

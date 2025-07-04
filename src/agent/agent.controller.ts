@@ -5,12 +5,20 @@ import { Controller, Post, Body } from '@nestjs/common';
 export class AgentController {
   constructor(private aiExtractorService: AiExtractorService) {}
 
-  @Post('test')
-  async testExtraction(@Body() body: { text: string; template?: string }) {
-    const { text, template = 'simple' } = body;
+  @Post('publish')
+  async extraction(
+    @Body()
+    body: {
+      metadata: Record<string, any>;
+      pdf: string;
+      template?: string;
+    },
+  ) {
+    const { metadata, pdf, template = 'cultural-heritage' } = body;
 
     const result = await this.aiExtractorService.extractMetadata(
-      text,
+      metadata,
+      pdf,
       template as any,
     );
 
@@ -18,52 +26,6 @@ export class AgentController {
       success: true,
       data: result,
       message: 'Extraction completed',
-    };
-  }
-
-  @Post('test-sample')
-  async testWithSample() {
-    const sampleText = `
-      UNESCO World Heritage Site Documentation
-      
-      The Angkor Archaeological Park in Siem Reap, Cambodia represents one of the most 
-      significant archaeological sites in Southeast Asia. This cultural heritage 
-      site encompasses the remains of the different capital cities of the Khmer 
-      Empire from the 9th to the 15th century.
-      
-      The site includes the famous Angkor Wat temple complex, built in the early 
-      12th century during the reign of King Suryavarman VII. The complex covers 
-      an area of over 400 square kilometers and contains magnificent examples of 
-      Khmer architecture.
-      
-      Conservation efforts led by UNESCO and the Cambodian government are ongoing 
-      to preserve these ancient monuments for future generations. The site faces 
-      challenges from tourism pressure, environmental factors, and the need for 
-      sustainable preservation techniques.
-      
-      Key monuments include:
-      - Angkor Wat temple complex
-      - Bayon Temple in Angkor Thom
-      - Ta Prohm temple
-      - Banteay Srei temple
-      
-      Author: Santiago Cammi
-      Affiliation: Lucero Labs
-      ContactEmail: hello@lucerolabs.xyz
-      IpfsHash: 'Qm0x'
-      blockchainAttestation: '0x
-
-      The site was inscribed on the UNESCO World Heritage List in 1992 and 
-      attracts over 2 million visitors annually.
-    `;
-
-    const result = await this.aiExtractorService.extractMetadata(sampleText, 'cultural-heritage');
-
-    return {
-      success: true,
-      data: result,
-      message: 'Sample extraction completed',
-      input_length: sampleText.length,
     };
   }
 }

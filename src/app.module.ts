@@ -1,3 +1,5 @@
+import { StorageModule } from './storage/storage.module';
+import { ProcessingModule } from './processing/processing.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -11,6 +13,8 @@ import { AgentModule } from './agent/agent.module';
       envFilePath: '.env',
     }),
     AgentModule,
+    StorageModule,
+    ProcessingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

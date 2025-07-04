@@ -31,17 +31,29 @@ export class AiExtractorService {
   }
 
   async extractMetadata(
-    text: string,
+    metadata: Record<string, any>,
+    pdf: string,
     templateName: 'cultural-heritage' | 'simple' | 'custom' = 'simple',
   ): Promise<ExtractedContent> {
     try {
-      const truncatedText = text.substring(0, 4000);
+      const pdfText = await this.convertPdfToText(pdf);
+
+      const combinedContent = {
+        pdfText,
+        ...metadata,
+      };
 
       const template = this.templateService.getTemplate(templateName);
+
+      // Each item we want to inject onto the prompt needs to be specified.
       const formattedTemplate = this.templateService.formatTemplate(template, {
-        text: truncatedText,
+        text: pdfText,
         maxChars: '4000',
         current_date: new Date().toISOString().split('T')[0],
+        cid: '',
+        trxHash: '',
+        reasercher: '',
+        institution: '',
       });
 
       // Create prompt
@@ -63,9 +75,29 @@ export class AiExtractorService {
       return extracted as ExtractedContent;
     } catch (error) {
       this.logger.error('Gemini extraction failed:', error.message);
-      throw new Error();
+      throw new Error(`Extraction failed: ${error.message}`);
     }
   }
+
+  private async convertPdfToText(base64Pdf: string): Promise<string> {
+    try {
+      const cleanBase64 = base64Pdf.replace(
+        /^data:application\/pdf;base64,/,
+        '',
+      );
+
+      const pdfBuffer = Buffer.from(cleanBase64, 'base64');
+
+      const pdfParse = require('pdf-parse');
+      const data = await pdfParse(pdfBuffer);
+
+      return data.text;
+    } catch (error) {
+      this.logger.error('PDF conversion failed:', error.message);
+      throw new Error(`PDF conversion failed: ${error.message}`);
+    }
+  }
+
 
   private cleanJsonResponse(response: string): string {
     // Remove markdown code blocks
