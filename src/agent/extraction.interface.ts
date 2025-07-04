@@ -3,6 +3,12 @@ export interface ExtractedContent {
   title: string;
   inscription_year?: number;
   nomination_number?: string;
+  author: string;
+  affiliation?: string;
+  contactEmail: string;
+  description?: string;
+  ipfsHash?: string;
+  blockchainAttestation?: string;
 
   // Entities
   entities: {

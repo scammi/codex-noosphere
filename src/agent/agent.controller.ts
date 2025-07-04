@@ -47,6 +47,12 @@ export class AgentController {
       - Ta Prohm temple
       - Banteay Srei temple
       
+      Author: Santiago Cammi
+      Affiliation: Lucero Labs
+      ContactEmail: hello@lucerolabs.xyz
+      IpfsHash: 'Qm0x'
+      blockchainAttestation: '0x
+
       The site was inscribed on the UNESCO World Heritage List in 1992 and 
       attracts over 2 million visitors annually.
     `;

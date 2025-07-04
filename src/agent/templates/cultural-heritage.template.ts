@@ -12,6 +12,12 @@ Return ONLY a valid JSON object with this exact structure:
   "title": "Title of the heritage element or site",
   "inscription_year": 2009,
   "nomination_number": "00258",
+  "author": "if not provided mock",
+  "affiliation": "if not provided mock",;
+  contactEmail": "if not provided mock",;
+  description": "if not provided mock",;
+  "ipfsHash": "if not provided mock",;
+  "blockchainAttestation": "if not provided mock",;
   
   "entities": {{
     "persons": ["individual people mentioned"],
