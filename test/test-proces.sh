@@ -5,7 +5,7 @@ set BASE_URL "http://localhost:3001"
 set ENDPOINT "/api/process/document"
 
 # Base64 PDF file
-set PDF_BASE64_FILE "pdfbase64.txt"
+set PDF_BASE64_FILE "pdf-base64.txt"
 
 # Check if PDF base64 file exists
 if not test -f $PDF_BASE64_FILE
