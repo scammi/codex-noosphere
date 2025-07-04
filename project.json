@@ -1,0 +1,23 @@
+{
+    "name": "Codex Noosphere",
+    "tagline": "Automated cultural heritage preservation using self-sovereign identity and AI-powered Dataverse integration",
+    "description": "Extends QuarkID W3C Verifiable Credentials platform for automated cultural heritage preservation. Researchers sign documents with verifiable credentials, which are automatically uploaded to IPFS with blockchain attestations. AI agents extract metadata and create Dataverse datasets automatically, eliminating expensive DOIs and manual processes while ensuring perpetual distributed storage.",
+    "team": [
+      {
+        "name": "Santiago Cammi",
+        "email": "scammi@gmail.com"
+      }
+    ],
+    "demo_url": "TBD",
+    "video_url": "TBD",
+    "technologies": [
+      "W3C Verifiable Credentials",
+      "IPFS",
+      "Blockchain Attestations",
+      "NestJS",
+      "TypeScript",
+      "AI/LLM",
+      "Dataverse API",
+      "React"
+    ]
+  }
