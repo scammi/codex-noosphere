@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ChatOpenAI } from '@langchain/openai';
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { ExtractedContent } from './extraction.interface';
 import { TemplateService } from './templates/template.service';
@@ -8,23 +8,24 @@ import { TemplateService } from './templates/template.service';
 @Injectable()
 export class AiExtractorService {
   private readonly logger = new Logger(AiExtractorService.name);
-  private chatModel: ChatOpenAI;
+  private chatModel: ChatGoogleGenerativeAI;
 
   constructor(
     private configService: ConfigService,
     private templateService: TemplateService,
   ) {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+    const apiKey = this.configService.get<string>('GOOGLE_API_KEY');
 
     if (apiKey) {
-      this.chatModel = new ChatOpenAI({
+      this.chatModel = new ChatGoogleGenerativeAI({
+        model: 'gemini-2.0-flash-exp',
         temperature: 0.1,
-        modelName: 'gpt-4',
-        openAIApiKey: apiKey,
+        apiKey: apiKey,
       });
+      this.logger.log('Initialized Gemini AI model');
     } else {
       this.logger.warn(
-        'OpenAI API key not found. Will use fallback extraction.',
+        'Google API key not found. Will use fallback extraction.',
       );
     }
   }
@@ -53,6 +54,7 @@ export class AiExtractorService {
       });
 
       // Get AI response
+      this.logger.log('Calling Gemini API for extraction...');
       const response = await this.chatModel.invoke(await prompt.format({}));
 
       // Clean and parse JSON
@@ -63,21 +65,26 @@ export class AiExtractorService {
 
       // Validate and return
       if (this.isValidExtraction(extracted)) {
-        this.logger.log('AI extraction successful');
-        return extracted;
+        this.logger.log('Gemini extraction successful');
+        return {
+          ...extracted,
+          heritage_type: this.validateHeritageType(extracted.heritage_type),
+        };
       } else {
-        this.logger.warn('Invalid AI response, using fallback');
+        this.logger.warn('Invalid Gemini response, using fallback');
         return this.fallbackExtraction(text);
       }
     } catch (error) {
-      this.logger.error('AI extraction failed:', error.message);
+      this.logger.error('Gemini extraction failed:', error.message);
       return this.fallbackExtraction(text);
     }
   }
 
   private cleanJsonResponse(response: string): string {
+    // Remove markdown code blocks
     let cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '');
 
+    // Remove any text before the first {
     const start = cleaned.indexOf('{');
     const end = cleaned.lastIndexOf('}');
 
@@ -94,9 +101,20 @@ export class AiExtractorService {
       Array.isArray(extraction.keywords) &&
       Array.isArray(extraction.locations) &&
       typeof extraction.summary === 'string' &&
-      typeof extraction.heritage_type === 'string' &&
-      typeof extraction.confidence === 'number'
-    );
+      typeof extraction.heritage_type === 'string'
+   );
+  }
+
+  private validateHeritageType(type: string): ExtractedContent['heritage_type'] {
+    const validTypes: ExtractedContent['heritage_type'][] = [
+      'Cultural',
+      'Natural',
+      'Mixed',
+      'Intangible'
+    ];
+    return validTypes.includes(type as any)
+      ? (type as ExtractedContent['heritage_type'])
+      : 'Cultural';
   }
 
   private fallbackExtraction(text: string): ExtractedContent {
@@ -115,45 +133,43 @@ export class AiExtractorService {
       'museum',
     ];
 
-    // Extract keywords by finding cultural terms
+    // Extract keywords
     const keywords = culturalTerms
       .filter((term) => text.toLowerCase().includes(term))
       .slice(0, 5);
 
-    // Simple location extraction
-    const locationMatches =
-      text.match(
-        /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+(?:Park|Site|Museum|Monument))\b/g,
-      ) || [];
+    // Better location extraction
+    const locationMatches = [
+      ...(text.match(/\b[A-Z][a-z]+,\s+[A-Z][a-z]+\b/g) || []), // "Siem Reap, Cambodia"
+      ...(text.match(/\b[A-Z][a-z]+\s+Archaeological\s+Park\b/g) || []), // "Angkor Archaeological Park"
+      ...(text.match(/\b[A-Z][a-z]+\s+(?:Site|Museum|Monument|Temple)\b/g) || []),
+    ];
     const locations = [...new Set(locationMatches)].slice(0, 3);
 
-    // Heritage type detection
+    // Heritage type detection - prioritize Cultural for heritage docs
     let heritage_type = 'Cultural';
-    if (
-      text.toLowerCase().includes('natural') ||
-      text.toLowerCase().includes('park')
-    ) {
+    if (text.toLowerCase().includes('natural park') ||
+        text.toLowerCase().includes('biodiversity') ||
+        text.toLowerCase().includes('ecosystem')) {
       heritage_type = 'Natural';
     }
-    if (
-      text.toLowerCase().includes('intangible') ||
-      text.toLowerCase().includes('tradition')
-    ) {
+    if (text.toLowerCase().includes('intangible') ||
+        text.toLowerCase().includes('tradition') ||
+        text.toLowerCase().includes('folklore')) {
       heritage_type = 'Intangible';
     }
 
-    // Simple summary (first two sentences)
-    const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 10);
-    const summary =
-      sentences.slice(0, 2).join('. ').substring(0, 200) +
+    // Clean summary
+    const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 20);
+    const summary = sentences.slice(0, 2).join('. ').trim().substring(0, 200) +
       (sentences.length > 2 ? '...' : '');
 
     return {
       keywords: keywords.length > 0 ? keywords : ['cultural heritage'],
       locations,
       summary: summary || 'Cultural heritage document processed by AI agent.',
-      heritage_type: heritage_type as ExtractedContent['heritage_type'],
-      confidence: 0.6,
+      heritage_type: this.validateHeritageType(heritage_type),
+      confidence: 0.7,
     };
   }
 }
