@@ -11,6 +11,7 @@ import { StorageService } from '../storage/storage.service';
 import { AiExtractorService } from '../agent/agent.service';
 import { DataverseService } from '../dataverse/dataverse.service';
 import { ExtractedContent } from '../agent/interfaces/extraction.interface';
+// import { createAttestation } from '../attestation/attestation.service';
 
 @Controller('process')
 export class ProcessingController {
@@ -24,6 +25,7 @@ export class ProcessingController {
     private readonly dataverseService: DataverseService,
   ) {}
 
+  createAttestatiddon
   @Post('document')
   async processDocument(
     @Body()
@@ -58,14 +60,16 @@ export class ProcessingController {
       const ipfsCID = uploadResult.cid;
       this.logger.log(`PDF uploaded to IPFS with CID: ${ipfsCID}`);
 
-      // 2. Add CID to metadata
+      // 2. Attestation IPFS Upload + Blockchain transaction
       const updatedMetadata = {
         ...metadata,
         ipfsCID: ipfsCID,
       };
       this.logger.log('Metadata updated with IPFS CID.');
 
-      this.logger.log('Attestation: ', 'https://snowtrace.io/tx/0xf4130ffd74ba229332e15bb2f7e37cabd0a93134f8a156685c713011f57efcf8?chainid=43114' );
+      // const attestationHash =  await createAttestation.createAttestation(ipfsCID); // Comment out to avoid gas cost.
+      // this.logger.log('Attestation created at: ', attestationHash);
+
       // 3. Call Agent Service
       this.logger.log('Calling Agent Service for extraction...');
 

@@ -7,6 +7,22 @@ Codex Noosphere extends the QuarkID self-sovereign identity platform, a W3C Veri
 
 Our system gives a researcher a wallet and a credential that marks them as an authorized publisher. The credential is presented and verified in an instance of submitting a cultural artifact for documentation. Once the presentation is verified, the document is uploaded to IPFS and an on-chain attestation created. Our Dataverse agent picks up the event, downloads the document, creates structured metadata and uploads it onto a Dataverse Collection. The result is a process that requires the researcher to only upload once, the cultural heritage is preserved in perpetual storage, and automatically the data becomes findable through Dataverse, no need for the researcher to manually create the dataset and upload.
 
+This repository is a NestJS application that works as a module we can consume in our existing W3C Credential signer. It is a microservice that exposes logic for the attestation, metadata extraction and publishing onto Dataverse. The main entry point can be found within the [process controller](https://github.com/scammi/codex-noosphere/blob/main/src/processing/processing.controller.ts#L54).
+
+
+- [Video Demo](https://studio.youtube.com/video/yUt-sprnonA/edit)
+
+- [Slides](https://docs.fileverse.io/document/6ULsWdjWg4LsFLx4u791qA)
+
+- [Try it!](autopen.lucerolabs.xyz) > email for admin access (hello@lucerolabs.xyz)
+
+## Repositories
+- [W3C Wallet](https://github.com/orgs/sinodos-id/repositories)
+
+- [Issuer Verifier Agent](https://github.com/sinodos-id/quark-issuer-verifier)
+
+- [Quarkid signer](https://github.com/scammi/quark-signer)
+
 
 ## The Problem
 
@@ -33,6 +49,7 @@ Our system gives a researcher a wallet and a credential that marks them as an au
 ## Key Features
 
 - **🆔 DID-based Identifiers**:  Each researcher gets their wallet, their private key is used to issue document attestations. 
+- **✅ User Data Sovereignty**: Researchers control their DID keys
 - **📜 Immutable Preservation**: IPFS + blockchain ensures cultural memory survives institutional collapse
 - **🤖 AI Metadata Generation**: Automatically extracts structured metadata from the document.
 - **🌐 Dataverse Integration**: Extracted metadata isu used to publishing to the world's largest research data repository
@@ -40,13 +57,12 @@ Our system gives a researcher a wallet and a credential that marks them as an au
 
 ## Workflow
 
-```
-Cultural Institution → Issues Credential → Researcher Signs Document
-                                              ↓
-IPFS Storage ← AI Metadata Generation ← Blockchain Attestation
-     ↓
-Dataverse Dataset Creation (with QuarkID as persistent identifier)
-```
+![Codex Noosphere Flow](https://i.imgur.com/UWPVijx.png)
+
+## Dataverse Integration
+
+The Agent module receives the researcher credential along with the pdf as a buffer, the agent builds up the metadata and the body for the Dataverse publication. The Dataverse module, creates a dataset within a collection and appends the file.
+
 
 ## Technology Stack
 
@@ -58,7 +74,7 @@ Dataverse Dataset Creation (with QuarkID as persistent identifier)
 
 ## Impact
 
-- **Cost**: $20,000 → $100 for 10,000 cultural heritage identifiers
+- **Cost**: Cheap DOIs
 - **Resilience**: Distributed storage survives institutional destruction
 - **Discovery**: AI-enhanced global cultural heritage search
 - **Sovereignty**: Researchers and institutions control their data
