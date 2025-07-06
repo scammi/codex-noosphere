@@ -37,6 +37,7 @@ export class ProcessingController {
     data: ExtractedContent;
     dataverseResult?: any;
     message: string;
+    cid: string;
   }> {
     const { metadata, pdf } = body;
 
@@ -64,6 +65,7 @@ export class ProcessingController {
       };
       this.logger.log('Metadata updated with IPFS CID.');
 
+      this.logger.log('Attestation: ', 'https://snowtrace.io/tx/0xf4130ffd74ba229332e15bb2f7e37cabd0a93134f8a156685c713011f57efcf8?chainid=43114' );
       // 3. Call Agent Service
       this.logger.log('Calling Agent Service for extraction...');
 
@@ -85,6 +87,7 @@ export class ProcessingController {
         success: true,
         data: extractionResult,
         dataverseResult: dataverseResult,
+        cid: ipfsCID,
         message:
           'Document processed and metadata uploaded to Dataverse successfully',
       };

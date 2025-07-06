@@ -34,15 +34,13 @@ export class DataverseService {
   ): Promise<any> {
     try {
       // Step 1: Create new dataset with proper metadata structure
-      const datasetId = await this.createDataset(extractionResult);
+      const { datasetId, persistentId } =
+        await this.createDataset(extractionResult);
 
       // Step 2: Upload complete metadata as a reference file
-      const uploadResult = await this.uploadFileToDataset(
-        datasetId,
-        pdfBase64,
-      );
+      const uploadResult = await this.uploadFileToDataset(datasetId, pdfBase64);
 
-      const datasetUrl = `${this.dataverseServerUrl}/dataset.xhtml?id=${datasetId}`;
+      const datasetUrl = `${this.dataverseServerUrl}/dataset.xhtml?id=${persistentId}`;
 
       this.logger.log(`Heritage dataset created successfully: ${datasetUrl}`);
 
@@ -58,7 +56,9 @@ export class DataverseService {
     }
   }
 
-  async createDataset(extractionResult: ExtractedContent): Promise<string> {
+  async createDataset(
+    extractionResult: ExtractedContent,
+  ): Promise<{ datasetId: string; persistentId: string }> {
     const url = `${this.dataverseServerUrl}/api/dataverses/${this.dataverseAlias}/datasets`;
 
     try {
@@ -73,14 +73,14 @@ export class DataverseService {
         }),
       );
 
-      const datasetId = response.data.data.id;
-      const persistentId = response.data.data.persistentId;
+      const datasetId = response.data.data.id as string;
+      const persistentId = response.data.data.persistentId as string;
 
       this.logger.log(
         `Created new dataset with ID: ${datasetId}, DOI: ${persistentId}`,
       );
 
-      return datasetId;
+      return { datasetId, persistentId };
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.message || error.message || 'Unknown error';
