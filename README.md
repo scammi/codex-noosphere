@@ -9,12 +9,9 @@ Our system gives a researcher a wallet and a credential that marks them as an au
 
 This repository is a NestJS application that works as a module we can consume in our existing W3C Credential signer. It is a microservice that exposes logic for the attestation, metadata extraction and publishing onto Dataverse. The main entry point can be found within the [process controller](https://github.com/scammi/codex-noosphere/blob/main/src/processing/processing.controller.ts#L54).
 
-
 - [Video Demo](https://studio.youtube.com/video/yUt-sprnonA/edit)
 
 - [Slides](https://docs.fileverse.io/document/6ULsWdjWg4LsFLx4u791qA)
-
-- [Try it!](autopen.lucerolabs.xyz) > email for admin access (hello@lucerolabs.xyz)
 
 ## Repositories
 - [W3C Wallet](https://github.com/orgs/sinodos-id/repositories)
@@ -49,7 +46,6 @@ This repository is a NestJS application that works as a module we can consume in
 ## Key Features
 
 - **🆔 DID-based Identifiers**:  Each researcher gets their wallet, their private key is used to issue document attestations. 
-- **✅ User Data Sovereignty**: Researchers control their DID keys
 - **📜 Immutable Preservation**: IPFS + blockchain ensures cultural memory survives institutional collapse
 - **🤖 AI Metadata Generation**: Automatically extracts structured metadata from the document.
 - **🌐 Dataverse Integration**: Extracted metadata isu used to publishing to the world's largest research data repository
@@ -78,6 +74,10 @@ The Agent module receives the researcher credential along with the pdf as a buff
 - **Resilience**: Distributed storage survives institutional destruction
 - **Discovery**: AI-enhanced global cultural heritage search
 - **Sovereignty**: Researchers and institutions control their data
+
+## DEMO
+
+- [Try it!](autopen.lucerolabs.xyz) > email for admin access (hello@lucerolabs.xyz)
 
 ---
 
